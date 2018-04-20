@@ -3,6 +3,12 @@
 P P1, P2, P3, P4, P5, P6, P7, P8, P9;
 vector<P> Ps;
 vector<P> Ps_num[6];			//Áù¸öÃæ¶ÔÓ¦ÁùÖÖ²»Í¬µÄ²ÊÉ«¿ì·½·¨
+string Bcolor[10];				//´æ·ÅÊ¶±ğ½á¹û,global
+string Dcolor[10];
+string Fcolor[10];
+string Lcolor[10];
+string Rcolor[10];
+string Ucolor[10];
 
 void ColorTest(Mat imgHSV, String c)
 {
@@ -339,7 +345,7 @@ void getHSV(Mat hsv, int x, int y) {
 	return;
 }
 
-void JudgeColor(Mat image, Mat& Blank, String c,string color[10],vector <struct P> Ps){
+void JudgeColor(Mat image, Mat& Blank, String c,string color[],vector <struct P> Ps){
 	resize(image, image, Size(900, 900), 0, 0, 3);			//µ÷ÕûÍ¼Æ¬´óĞ¡
 	int i, j;
 
@@ -375,7 +381,7 @@ void JudgeColor(Mat image, Mat& Blank, String c,string color[10],vector <struct 
 	imwrite("P9.png", P9);
 	Mat imgHSV[10];
 	Mat imgThresholded(200, 200, CV_8UC3);
-	//string color[10];									//´æ·Å9¸öÉ«¿éµÄÑÕÉ«
+
 	cvtColor(P1, imgHSV[1], COLOR_BGR2HSV);
 	cvtColor(P2, imgHSV[2], COLOR_BGR2HSV);
 	cvtColor(P3, imgHSV[3], COLOR_BGR2HSV);
@@ -396,9 +402,6 @@ void JudgeColor(Mat image, Mat& Blank, String c,string color[10],vector <struct 
 	}
 	*/
 	
-	
-	
-	
 	for (i = 1; i <= 9; i++) {				//¶ÔÃ¿¸öÑÕÉ«×öthreshold,µÃµ½É«¿éµÄÑÕÉ«¾ØÕó
 		if (Color(imgHSV[i], "Red") == 1)
 			color[i] = "Red";
@@ -416,11 +419,17 @@ void JudgeColor(Mat image, Mat& Blank, String c,string color[10],vector <struct 
 
 	for (i = 1; i <= 9; i++)				//É«¿éÌî³ä
 		FillBlocks(Blank, color[i], i);
-	line(Blank, Point(0, 120), Point(360, 120), Scalar(0, 0, 0), 1, 8, 0);
+	line(Blank, Point(0, 120), Point(360, 120), Scalar(0, 0, 0), 1, 8, 0);		//»æÖÆ·Ö¸ôÉ«¿éµÄºÚÏß
 	line(Blank, Point(0, 240), Point(360, 240), Scalar(0, 0, 0), 1, 8, 0);
 	line(Blank, Point(120, 0), Point(120, 360), Scalar(0, 0, 0), 1, 8, 0);
 	line(Blank, Point(240, 0), Point(240, 360), Scalar(0, 0, 0), 1, 8, 0);
-	imwrite("pic_rec\\" + c + ".png", Blank);
+	for (i = 1; i <= 9; i++)				//¶ÔÃ¿¸öÑÕÉ«×öthreshold,µÃµ½É«¿éµÄÑÕÉ«¾ØÕó
+		if (color[i] == "")
+			break;				//´æÔÚÎ´Ê¶±ğ³öÀ´µÄÉ«¿éÊ±£¬Ìø³öÑ­»·
+	if (i > 9)							//Ö»ÓĞÔÚÈ«²¿É«¿éÊ¶±ğ³öÀ´²Å±£´æÊ¶±ğ½á¹ûÍ¼Æ¬
+		imwrite("pic_rec\\" + c + ".png", Blank);
+	else
+		cout << "Failed to recognize" + c + "the first time" << endl;	//ÌáÊ¾Ò»ÏÂ£¬ËµÃ÷µÚÒ»´ÎÃ»ÓĞÊ¶±ğ³É¹¦£¬Õâ¸öÔÚµ÷ÊÔµÄÊ±ºòÓÃµÃµ½
 }
 
 string Print_str(string color[10], vector <string> standardcolor)		//order URFDLB
@@ -444,9 +453,9 @@ string Print_str(string color[10], vector <string> standardcolor)		//order URFDL
 	return str;
 }
 
-void Ps_reset(vector<struct P>& Ps) {		//¶Ô²ÉÑùÉ«¿éµÄÎ»ÖÃ×ö³õÊ¼»¯²Ù×÷
+void Ps_reset(vector<P>& Ps, vector<P> Ps_num[]) {		//¶Ô²ÉÑùÉ«¿éµÄÎ»ÖÃ×ö³õÊ¼»¯²Ù×÷
 	Ps.clear();
-	P1.x1 = P2.x1 = P3.x1 = 190;
+	P1.x1 = P2.x1 = P3.x1 = 190;				//ÕâÊÇ×î³õµÄ°æ±¾£¬ËùÓĞÃæµÄ²ÉÑù·½·¨¶¼ÏàÍ¬
 	P1.x2 = P2.x2 = P3.x2 = 200;
 	P4.x1 = P5.x1 = P6.x1 = 420;
 	P4.x2 = P5.x2 = P6.x2 = 430;
@@ -468,6 +477,66 @@ void Ps_reset(vector<struct P>& Ps) {		//¶Ô²ÉÑùÉ«¿éµÄÎ»ÖÃ×ö³õÊ¼»¯²Ù×÷
 	Ps.push_back(P7);
 	Ps.push_back(P8);
 	Ps.push_back(P9);
+
+	Ps_num[0].push_back(P1);
+	Ps_num[0].push_back(P2);
+	Ps_num[0].push_back(P3);
+	Ps_num[0].push_back(P4);
+	Ps_num[0].push_back(P5);
+	Ps_num[0].push_back(P6);
+	Ps_num[0].push_back(P7);
+	Ps_num[0].push_back(P8);
+	Ps_num[0].push_back(P9);
+
+	Ps_num[1].push_back(P1);
+	Ps_num[1].push_back(P2);
+	Ps_num[1].push_back(P3);
+	Ps_num[1].push_back(P4);
+	Ps_num[1].push_back(P5);
+	Ps_num[1].push_back(P6);
+	Ps_num[1].push_back(P7);
+	Ps_num[1].push_back(P8);
+	Ps_num[1].push_back(P9);
+
+	Ps_num[2].push_back(P1);
+	Ps_num[2].push_back(P2);
+	Ps_num[2].push_back(P3);
+	Ps_num[2].push_back(P4);
+	Ps_num[2].push_back(P5);
+	Ps_num[2].push_back(P6);
+	Ps_num[2].push_back(P7);
+	Ps_num[2].push_back(P8);
+	Ps_num[2].push_back(P9);
+
+	Ps_num[3].push_back(P1);
+	Ps_num[3].push_back(P2);
+	Ps_num[3].push_back(P3);
+	Ps_num[3].push_back(P4);
+	Ps_num[3].push_back(P5);
+	Ps_num[3].push_back(P6);
+	Ps_num[3].push_back(P7);
+	Ps_num[3].push_back(P8);
+	Ps_num[3].push_back(P9);
+
+	Ps_num[4].push_back(P1);
+	Ps_num[4].push_back(P2);
+	Ps_num[4].push_back(P3);
+	Ps_num[4].push_back(P4);
+	Ps_num[4].push_back(P5);
+	Ps_num[4].push_back(P6);
+	Ps_num[4].push_back(P7);
+	Ps_num[4].push_back(P8);
+	Ps_num[4].push_back(P9);
+
+	Ps_num[5].push_back(P1);
+	Ps_num[5].push_back(P2);
+	Ps_num[5].push_back(P3);
+	Ps_num[5].push_back(P4);
+	Ps_num[5].push_back(P5);
+	Ps_num[5].push_back(P6);
+	Ps_num[5].push_back(P7);
+	Ps_num[5].push_back(P8);
+	Ps_num[5].push_back(P9);
 }   
 
 string Recognition() {			//Ê¶±ğÄ§·½Ò»¸öÃæµÄÉ«¿é£¬¼Ó²ÎcaseºÍÃæ²ÎÊı£¬¸ù¾İ²»Í¬²ÎÊıÀ´µ÷É«¿é²ÉÑùÎ»ÖÃPs
@@ -482,22 +551,17 @@ string Recognition() {			//Ê¶±ğÄ§·½Ò»¸öÃæµÄÉ«¿é£¬¼Ó²ÎcaseºÍÃæ²ÎÊı£¬¸ù¾İ²»Í¬²ÎÊıÀ
 	Mat U(360, 360, CV_8UC3, Scalar(255, 255, 255));		//UÃæ
 	int i;
 	Mat image;
-	string Bcolor[10];
-	string Dcolor[10];
-	string Fcolor[10];
-	string Lcolor[10];
-	string Rcolor[10];
-	string Ucolor[10];
 	vector <string> standardcolor;
 	string tmp[6];				//½ÓÊÜ·µ»ØµÄ×Ö·û´®
 	string color_def;
 
 
-	Ps_reset(Ps);		// ³õÊ¼»¯²ÎÊı
-	image = imread("pic_cam//B.png");
-	JudgeColor(image, B, "rec_B", Bcolor, Ps);
+	Ps_reset(Ps, Ps_num);		// ³õÊ¼»¯²ÎÊı
+	image = imread("pic_cam//B.png");			//BÃæ¿ÉÒÔÒ»´ÎÊ¶±ğ£¬Ê¶±ğÍê¾Í±£´æÍ¼Æ¬
+	JudgeColor(image, B, "rec_B", Bcolor, Ps_num[0]);
 
-	while (1) {			//Õâ¸öÑ­»·ÊÇÓÃÀ´×öÕÚµ²µÄ£¬ÓÃ×ÅÄ¿Ç°Ã»Ê²Ã´Ó°Ïì
+	/*
+	while (1) {					//Õâ¸öÑ­»·ÊÇÓÃÀ´×öÕÚµ²µÄ£¬ÓÃ×ÅÄ¿Ç°Ã»Ê²Ã´Ó°Ïì
 		for (i = 1; i <= 9; i++)
 			if (Bcolor[i] == "")
 				break;
@@ -511,13 +575,17 @@ string Recognition() {			//Ê¶±ğÄ§·½Ò»¸öÃæµÄÉ«¿é£¬¼Ó²ÎcaseºÍÃæ²ÎÊı£¬¸ù¾İ²»Í¬²ÎÊıÀ
 			Ps[7].x1 -= 10;
 			Ps[7].x2 -= 10;
 		}
-		JudgeColor(image, B, "rec_B", Bcolor, Ps);
+		JudgeColor(image, B, "rec_B", Bcolor, Ps_num[0]);
 	}
+	*/
 
-	Ps_reset(Ps);
-	image = imread("pic_cam//D.png");
-	JudgeColor(image, D, "rec_D", Dcolor, Ps);
+	Ps_reset(Ps, Ps_num);			//ÉèÖÃ²ÉÑùÎ»ÖÃ£¬Õâ¸öËæºóµ÷Õû
+	image = imread("pic_cam//cam_case1_D.png");
+	JudgeColor(image, D, "rec_D", Dcolor, Ps_num[1]);
+	image = imread("pic_cam//cam_case2_D.png");			//×öµÚ¶ş´ÎÊ¶±ğ
+	JudgeColor(image, D, "rec_D", Dcolor, Ps_num[1]);
 
+	/*
 	while (1) {
 		for (i = 1; i <= 9; i++)
 			if (Dcolor[i] == "")			//ÅĞ¶ÏÊ§°ÜÔò¼ÌĞøÅĞ¶Ï
@@ -532,13 +600,17 @@ string Recognition() {			//Ê¶±ğÄ§·½Ò»¸öÃæµÄÉ«¿é£¬¼Ó²ÎcaseºÍÃæ²ÎÊı£¬¸ù¾İ²»Í¬²ÎÊıÀ
 			Ps[7].x1 -= 10;
 			Ps[7].x2 -= 10;
 		}
-		JudgeColor(image, D, "rec_D", Dcolor, Ps);
+		JudgeColor(image, D, "rec_D", Dcolor, Ps_num[1]);
 	}
+	*/
 
-	Ps_reset(Ps);
-	image = imread("pic_cam//F.png");
-	JudgeColor(image, F, "rec_F", Fcolor, Ps);
+	Ps_reset(Ps, Ps_num);				//ÉèÖÃ²ÉÑùÎ»ÖÃ£¬Õâ¸öËæºóµ÷Õû
+	image = imread("pic_cam//cam_case1_F.png");
+	JudgeColor(image, F, "rec_F", Fcolor, Ps_num[2]);
+	image = imread("pic_cam//cam_case2_F.png");			//×öµÚ¶ş´ÎÊ¶±ğ
+	JudgeColor(image, F, "rec_F", Fcolor, Ps_num[2]);
 
+	/*
 	while (1) {
 		for (i = 1; i <= 9; i++)
 			if (Fcolor[i] == "")
@@ -553,18 +625,22 @@ string Recognition() {			//Ê¶±ğÄ§·½Ò»¸öÃæµÄÉ«¿é£¬¼Ó²ÎcaseºÍÃæ²ÎÊı£¬¸ù¾İ²»Í¬²ÎÊıÀ
 			Ps[7].x1 -= 10;
 			Ps[7].x2 -= 10;
 		}
-		JudgeColor(image, F, "rec_F", Fcolor, Ps);
+		JudgeColor(image, F, "rec_F", Fcolor, Ps_num[2]);
 	}
+	*/
 
-	Ps_reset(Ps);
-	image = imread("pic_cam//L.png");
-	JudgeColor(image, L, "rec_L", Lcolor, Ps);
+	Ps_reset(Ps, Ps_num);
+	image = imread("pic_cam//L.png");			//LÖ»ÒªÊ¶Ò»´Î
+	JudgeColor(image, L, "rec_L", Lcolor, Ps_num[3]);
 
 
-	Ps_reset(Ps);
-	image = imread("pic_cam//R.png");
-	JudgeColor(image, R, "rec_R", Rcolor, Ps);
+	Ps_reset(Ps, Ps_num);				//ÉèÖÃ²ÉÑùµãµÄÎ»ÖÃ
+	image = imread("pic_cam//cam_case1_R.png");
+	JudgeColor(image, R, "rec_R", Rcolor, Ps_num[4]);
+	image = imread("pic_cam//cam_case2_R.png");		//×öµÚ¶ş´ÎÊ¶±ğ
+	JudgeColor(image, R, "rec_R", Rcolor, Ps_num[4]);
 
+	/*
 	while (1) {
 		for (i = 1; i <= 9; i++)
 			if (Rcolor[i] == "")
@@ -579,13 +655,16 @@ string Recognition() {			//Ê¶±ğÄ§·½Ò»¸öÃæµÄÉ«¿é£¬¼Ó²ÎcaseºÍÃæ²ÎÊı£¬¸ù¾İ²»Í¬²ÎÊıÀ
 			Ps[5].y1 -= 10;
 			Ps[5].y2 -= 10;
 		}
-		JudgeColor(image, R, "rec_R", Rcolor, Ps);
+		JudgeColor(image, R, "rec_R", Rcolor, Ps_num[4]);
 	}
+	*/
 
 
-	Ps_reset(Ps);
-	image = imread("pic_cam//U.png");
-	JudgeColor(image, U, "rec_U", Ucolor, Ps);
+	Ps_reset(Ps, Ps_num);				//ÉèÖÃ²ÉÑùµãµÄÎ»ÖÃ
+	image = imread("pic_cam//cam_case1_U.png");
+	JudgeColor(image, U, "rec_U", Ucolor, Ps_num[5]);
+	image = imread("pic_cam//cam_case2_U.png");			//×öµÚ¶ş´ÎÊ¶±ğ
+	JudgeColor(image, U, "rec_U", Ucolor, Ps_num[5]);
 
 	string Ustandard = Ucolor[5];
 	string Rstandard = Rcolor[5];
@@ -610,4 +689,118 @@ string Recognition() {			//Ê¶±ğÄ§·½Ò»¸öÃæµÄÉ«¿é£¬¼Ó²ÎcaseºÍÃæ²ÎÊı£¬¸ù¾İ²»Í¬²ÎÊıÀ
 	for (i = 0; i < 6; i++)
 		color_def += tmp[i];
 	return color_def;			//ÑÕÉ«µÄ¶¨Òå×Ö·û´®
+}
+
+void Empty_color(string Bcolor[], string Dcolor[], string Fcolor[], string Lcolor[], string Rcolor[], string Ucolor[])
+{
+	int i;
+	for (i = 0; i <= 9; i++) {
+		Bcolor[i] = "";
+		Dcolor[i] = "";
+		Fcolor[i] = "";
+		Lcolor[i] = "";
+		Rcolor[i] = "";
+		Ucolor[i] = "";
+	}
+}
+
+void Capture(string Case)
+{
+	VideoCapture  captureB(0);
+	VideoCapture  captureD(1);
+	//VideoCapture  captureF(2);
+	//VideoCapture  captureL(3);
+	//VideoCapture  captureR(4);
+	//VideoCapture  captureU(5);
+	if (!captureB.isOpened())
+	{
+		cout << "ÉãÏñÍ·B´ò¿ªÊ§°Ü£¡" << endl;
+		return;
+	}
+	if (!captureD.isOpened())
+	{
+		cout << "ÉãÏñÍ·D´ò¿ªÊ§°Ü£¡" << endl;
+		return;
+	}
+	/*
+	if (!captureF.isOpened())
+	{
+		cout << "ÉãÏñÍ·F´ò¿ªÊ§°Ü£¡" << endl;
+		return;
+	}
+	if (!captureL.isOpened())
+	{
+		cout << "ÉãÏñÍ·L´ò¿ªÊ§°Ü£¡" << endl;
+		return;
+	}
+	if (!captureR.isOpened())
+	{
+		cout << "ÉãÏñÍ·R´ò¿ªÊ§°Ü£¡" << endl;
+		return;
+	}
+	if (!captureU.isOpened())
+	{
+		cout << "ÉãÏñÍ·U´ò¿ªÊ§°Ü£¡" << endl;
+		return;
+	}
+	*/
+
+	char key;
+	char filename[200];
+	int count = 0;
+	namedWindow("¡¾ÊÓÆµ¡¿", 1);
+	Mat frameB, frameD, frameF, frameL, frameR, frameU;		//order: BDFLRU
+
+	while (1)
+	{
+		key = waitKey(50);
+		captureD >> frameD;
+		captureB >> frameB;
+		imshow("¡¾ÊÓÆµB¡¿", frameB);
+		imshow("¡¾ÊÓÆµD¡¿", frameD);
+		/*
+		imshow("¡¾ÊÓÆµF¡¿", frameF);
+		imshow("¡¾ÊÓÆµL¡¿", frameL);
+		imshow("¡¾ÊÓÆµR¡¿", frameR);
+		imshow("¡¾ÊÓÆµU¡¿", frameU);
+		*/
+
+		if (key == 27)
+			break;				//°´ESC¼üÍË³ö³ÌĞò  
+		if (key == 32)//°´¿Õ¸ñ¼ü½øĞĞÅÄÕÕ  
+		{
+			if (Case == "Case1") {
+				sprintf(filename, "B.png");
+				imwrite(filename, frameB);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ  
+				sprintf(filename, "cam_case1_D.png");
+				/*
+				imwrite(filename, frameD);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ
+				sprintf(filename, "cam_case1_F.png");
+				imwrite(filename, frameF);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ  
+				sprintf(filename, "L.png");
+				imwrite(filename, frameL);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ  
+				sprintf(filename, "cam_case1_R.png");
+				imwrite(filename, frameR);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ  
+				sprintf(filename, "cam_case1_U.png");
+				imwrite(filename, frameU);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ
+				*/
+				break;					//ÅÄÍêÕÕÒÔºóÌø³öÑ­»·²¢·µ»Ø
+			}
+			else if (Case == "Case2") {			//case2Ö»ĞèÒªÅÄÉã4¸öÃæ
+				sprintf(filename, "cam_case2_D.png");
+				/*
+				imwrite(filename, frameD);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ
+				sprintf(filename, "cam_case2_F.png");
+				imwrite(filename, frameF);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ
+				sprintf(filename, "cam_case2_R.png");
+				imwrite(filename, frameR);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ
+				sprintf(filename, "cam_case2_U.png");
+				imwrite(filename, frameU);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ
+				*/
+				break;					//ÅÄÍêÕÕÒÔºóÌø³öÑ­»·²¢·µ»Ø
+			}
+		}
+	}
+
+	return;
 }

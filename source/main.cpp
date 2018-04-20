@@ -14,9 +14,11 @@ extern "C" {
 }
 
 int main() {
+	Capture("Case1");
+	//一只手张开一只手松开
+	//Capture("Case2");
 	string cubicState;
 	cubicState = Recognition();
-
 	char* cp = new char[cubicState.length() + 1];
 	strcpy(cp, cubicState.c_str());
 	char* res = solve(cp, NULL);

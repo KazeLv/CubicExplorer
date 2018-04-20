@@ -14,9 +14,11 @@ int Color(Mat imgHSV, String C);
 void ColorTest(Mat imgHSV, String c);
 void FillBlocks(Mat& A, string color, int num);
 void getHSV(Mat hsv, int x, int y);
-void JudgeColor(Mat image, Mat& Blank, String c, string color[10], vector<struct P> Ps);	//将image读入，识别相应的色块并写入Blank，把颜色信息作为字符串回传
+void JudgeColor(Mat image, Mat& Blank, String c, string color[], vector<struct P> Ps);	//将image读入，识别相应的色块并写入Blank，把颜色信息作为字符串回传
 string Print_str(string color[10], vector <string> standardcolor);
-void Ps_reset(vector<struct P>& Ps);
+void Ps_reset(vector<P>& Ps, vector<P> Ps_num[]);
+void Empty_color(string Bcolor[], string Dcolor[], string Fcolor[], string Lcolor[], string Rcolor[], string Ucolor[]);
+void Capture(string Case);			//调用六个摄像头集体拍照
 
 string Recognition();
 
