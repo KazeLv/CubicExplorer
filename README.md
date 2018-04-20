@@ -1,1 +1,1 @@
-# ZK-Cup
+# Cubic
