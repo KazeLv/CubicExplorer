@@ -18,7 +18,7 @@ void JudgeColor(Mat image, Mat& Blank, String c, string color[10], vector<struct
 string Print_str(string color[10], vector <string> standardcolor);
 void Ps_reset(vector<struct P>& Ps);
 
-void recognition();
+string Recognition();
 
 const Scalar Red(0, 0, 255);
 const Scalar White(255, 255, 255);

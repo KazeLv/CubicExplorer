@@ -14,12 +14,8 @@ extern "C" {
 }
 
 int main() {
-	recognition();
-	string fileName = "defination_str.txt";
 	string cubicState;
-	ifstream targetFileStream;
-	targetFileStream.open(fileName);
-	targetFileStream >> cubicState;
+	cubicState = Recognition();
 
 	char* cp = new char[cubicState.length() + 1];
 	strcpy(cp, cubicState.c_str());
