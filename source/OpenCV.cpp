@@ -2,6 +2,13 @@
 #include "opencv.h"
 P P1, P2, P3, P4, P5, P6, P7, P8, P9;
 vector<P> Ps;
+vector<P> Ps_num[6];			//六个面对应六种不同的彩色快方法
+string Bcolor[10];				//存放识别结果,global
+string Dcolor[10];
+string Fcolor[10];
+string Lcolor[10];
+string Rcolor[10];
+string Ucolor[10];
 
 void ColorTest(Mat imgHSV, String c)
 {
@@ -338,7 +345,7 @@ void getHSV(Mat hsv, int x, int y) {
 	return;
 }
 
-void JudgeColor(Mat image, Mat& Blank, String c,string color[10],vector <struct P> Ps){
+void JudgeColor(Mat image, Mat& Blank, String c,string color[],vector <struct P> Ps){
 	resize(image, image, Size(900, 900), 0, 0, 3);			//调整图片大小
 	int i, j;
 
@@ -363,7 +370,7 @@ void JudgeColor(Mat image, Mat& Blank, String c,string color[10],vector <struct 
 	ColorBlocks[7] = Rect(0, 240, 120, 360);
 	ColorBlocks[8] = Rect(120, 240, 240, 360);
 	ColorBlocks[9] = Rect(240, 240, 360, 360);
-	imwrite("P1.png", P1);
+	imwrite("P1.png", P1);					//保存小色块
 	imwrite("P2.png", P2);
 	imwrite("P3.png", P3);
 	imwrite("P4.png", P4);
@@ -374,7 +381,7 @@ void JudgeColor(Mat image, Mat& Blank, String c,string color[10],vector <struct 
 	imwrite("P9.png", P9);
 	Mat imgHSV[10];
 	Mat imgThresholded(200, 200, CV_8UC3);
-	//string color[10];									//存放9个色块的颜色
+
 	cvtColor(P1, imgHSV[1], COLOR_BGR2HSV);
 	cvtColor(P2, imgHSV[2], COLOR_BGR2HSV);
 	cvtColor(P3, imgHSV[3], COLOR_BGR2HSV);
@@ -395,9 +402,6 @@ void JudgeColor(Mat image, Mat& Blank, String c,string color[10],vector <struct 
 	}
 	*/
 	
-	
-	
-	
 	for (i = 1; i <= 9; i++) {				//对每个颜色做threshold,得到色块的颜色矩阵
 		if (Color(imgHSV[i], "Red") == 1)
 			color[i] = "Red";
@@ -415,12 +419,17 @@ void JudgeColor(Mat image, Mat& Blank, String c,string color[10],vector <struct 
 
 	for (i = 1; i <= 9; i++)				//色块填充
 		FillBlocks(Blank, color[i], i);
-	line(Blank, Point(0, 120), Point(360, 120), Scalar(0, 0, 0), 1, 8, 0);
+	line(Blank, Point(0, 120), Point(360, 120), Scalar(0, 0, 0), 1, 8, 0);		//绘制分隔色块的黑线
 	line(Blank, Point(0, 240), Point(360, 240), Scalar(0, 0, 0), 1, 8, 0);
 	line(Blank, Point(120, 0), Point(120, 360), Scalar(0, 0, 0), 1, 8, 0);
 	line(Blank, Point(240, 0), Point(240, 360), Scalar(0, 0, 0), 1, 8, 0);
-	imwrite(c+".png", Blank);			//保存图片
-
+	for (i = 1; i <= 9; i++)				//对每个颜色做threshold,得到色块的颜色矩阵
+		if (color[i] == "")
+			break;				//存在未识别出来的色块时，跳出循环
+	if (i > 9)							//只有在全部色块识别出来才保存识别结果图片
+		imwrite("pic_rec\\" + c + ".png", Blank);
+	else
+		cout << "Failed to recognize" + c + "the first time" << endl;	//提示一下，说明第一次没有识别成功，这个在调试的时候用得到
 }
 
 string Print_str(string color[10], vector <string> standardcolor)		//order URFDLB
@@ -444,9 +453,9 @@ string Print_str(string color[10], vector <string> standardcolor)		//order URFDL
 	return str;
 }
 
-void Ps_reset(vector<struct P>& Ps) {
+void Ps_reset(vector<P>& Ps, vector<P> Ps_num[]) {		//对采样色块的位置做初始化操作
 	Ps.clear();
-	P1.x1 = P2.x1 = P3.x1 = 190;
+	P1.x1 = P2.x1 = P3.x1 = 190;				//这是最初的版本，所有面的采样方法都相同
 	P1.x2 = P2.x2 = P3.x2 = 200;
 	P4.x1 = P5.x1 = P6.x1 = 420;
 	P4.x2 = P5.x2 = P6.x2 = 430;
@@ -468,9 +477,69 @@ void Ps_reset(vector<struct P>& Ps) {
 	Ps.push_back(P7);
 	Ps.push_back(P8);
 	Ps.push_back(P9);
-}
 
-void recognition() {
+	Ps_num[0].push_back(P1);
+	Ps_num[0].push_back(P2);
+	Ps_num[0].push_back(P3);
+	Ps_num[0].push_back(P4);
+	Ps_num[0].push_back(P5);
+	Ps_num[0].push_back(P6);
+	Ps_num[0].push_back(P7);
+	Ps_num[0].push_back(P8);
+	Ps_num[0].push_back(P9);
+
+	Ps_num[1].push_back(P1);
+	Ps_num[1].push_back(P2);
+	Ps_num[1].push_back(P3);
+	Ps_num[1].push_back(P4);
+	Ps_num[1].push_back(P5);
+	Ps_num[1].push_back(P6);
+	Ps_num[1].push_back(P7);
+	Ps_num[1].push_back(P8);
+	Ps_num[1].push_back(P9);
+
+	Ps_num[2].push_back(P1);
+	Ps_num[2].push_back(P2);
+	Ps_num[2].push_back(P3);
+	Ps_num[2].push_back(P4);
+	Ps_num[2].push_back(P5);
+	Ps_num[2].push_back(P6);
+	Ps_num[2].push_back(P7);
+	Ps_num[2].push_back(P8);
+	Ps_num[2].push_back(P9);
+
+	Ps_num[3].push_back(P1);
+	Ps_num[3].push_back(P2);
+	Ps_num[3].push_back(P3);
+	Ps_num[3].push_back(P4);
+	Ps_num[3].push_back(P5);
+	Ps_num[3].push_back(P6);
+	Ps_num[3].push_back(P7);
+	Ps_num[3].push_back(P8);
+	Ps_num[3].push_back(P9);
+
+	Ps_num[4].push_back(P1);
+	Ps_num[4].push_back(P2);
+	Ps_num[4].push_back(P3);
+	Ps_num[4].push_back(P4);
+	Ps_num[4].push_back(P5);
+	Ps_num[4].push_back(P6);
+	Ps_num[4].push_back(P7);
+	Ps_num[4].push_back(P8);
+	Ps_num[4].push_back(P9);
+
+	Ps_num[5].push_back(P1);
+	Ps_num[5].push_back(P2);
+	Ps_num[5].push_back(P3);
+	Ps_num[5].push_back(P4);
+	Ps_num[5].push_back(P5);
+	Ps_num[5].push_back(P6);
+	Ps_num[5].push_back(P7);
+	Ps_num[5].push_back(P8);
+	Ps_num[5].push_back(P9);
+}   
+
+string Recognition() {			//识别魔方一个面的色块，加参case和面参数，根据不同参数来调色块采样位置Ps
 	
 	vector <Point> center;								//存放9个色块的中心位置,x和y，未来采样用
 														//初始化9个白色魔方
@@ -482,23 +551,17 @@ void recognition() {
 	Mat U(360, 360, CV_8UC3, Scalar(255, 255, 255));		//U面
 	int i;
 	Mat image;
-	string Bcolor[10];
-	string Dcolor[10];
-	string Fcolor[10];
-	string Lcolor[10];
-	string Rcolor[10];
-	string Ucolor[10];
 	vector <string> standardcolor;
-	ofstream out;
-	out.open("defination_str.txt", ios::out);			//把魔方描述字符串写入文件中
 	string tmp[6];				//接受返回的字符串
+	string color_def;
 
 
-	Ps_reset(Ps);		// 初始化参数
-	image = imread("B.png");
-	JudgeColor(image, B, "B_decode", Bcolor, Ps);
+	Ps_reset(Ps, Ps_num);		// 初始化参数
+	image = imread("pic_cam//B.png");			//B面可以一次识别，识别完就保存图片
+	JudgeColor(image, B, "rec_B", Bcolor, Ps_num[0]);
 
-	while (1) {
+	/*
+	while (1) {					//这个循环是用来做遮挡的，用着目前没什么影响
 		for (i = 1; i <= 9; i++)
 			if (Bcolor[i] == "")
 				break;
@@ -512,16 +575,20 @@ void recognition() {
 			Ps[7].x1 -= 10;
 			Ps[7].x2 -= 10;
 		}
-		JudgeColor(image, B, "B_decode", Bcolor, Ps);
+		JudgeColor(image, B, "rec_B", Bcolor, Ps_num[0]);
 	}
+	*/
 
-	Ps_reset(Ps);
-	image = imread("D.png");
-	JudgeColor(image, D, "D_decode", Dcolor, Ps);
+	Ps_reset(Ps, Ps_num);			//设置采样位置，这个随后调整
+	image = imread("pic_cam//cam_case1_D.png");
+	JudgeColor(image, D, "rec_D", Dcolor, Ps_num[1]);
+	image = imread("pic_cam//cam_case2_D.png");			//做第二次识别
+	JudgeColor(image, D, "rec_D", Dcolor, Ps_num[1]);
 
+	/*
 	while (1) {
 		for (i = 1; i <= 9; i++)
-			if (Dcolor[i] == "")
+			if (Dcolor[i] == "")			//判断失败则继续判断
 				break;
 		if (i > 9)
 			break;
@@ -533,13 +600,17 @@ void recognition() {
 			Ps[7].x1 -= 10;
 			Ps[7].x2 -= 10;
 		}
-		JudgeColor(image, D, "D_decode", Dcolor, Ps);
+		JudgeColor(image, D, "rec_D", Dcolor, Ps_num[1]);
 	}
+	*/
 
-	Ps_reset(Ps);
-	image = imread("F.png");
-	JudgeColor(image, F, "F_decode", Fcolor, Ps);
+	Ps_reset(Ps, Ps_num);				//设置采样位置，这个随后调整
+	image = imread("pic_cam//cam_case1_F.png");
+	JudgeColor(image, F, "rec_F", Fcolor, Ps_num[2]);
+	image = imread("pic_cam//cam_case2_F.png");			//做第二次识别
+	JudgeColor(image, F, "rec_F", Fcolor, Ps_num[2]);
 
+	/*
 	while (1) {
 		for (i = 1; i <= 9; i++)
 			if (Fcolor[i] == "")
@@ -554,18 +625,22 @@ void recognition() {
 			Ps[7].x1 -= 10;
 			Ps[7].x2 -= 10;
 		}
-		JudgeColor(image, F, "F_decode", Fcolor, Ps);
+		JudgeColor(image, F, "rec_F", Fcolor, Ps_num[2]);
 	}
+	*/
 
-	Ps_reset(Ps);
-	image = imread("L.png");
-	JudgeColor(image, L, "L_decode", Lcolor, Ps);
+	Ps_reset(Ps, Ps_num);
+	image = imread("pic_cam//L.png");			//L只要识一次
+	JudgeColor(image, L, "rec_L", Lcolor, Ps_num[3]);
 
 
-	Ps_reset(Ps);
-	image = imread("R.png");
-	JudgeColor(image, R, "R_decode", Rcolor, Ps);
+	Ps_reset(Ps, Ps_num);				//设置采样点的位置
+	image = imread("pic_cam//cam_case1_R.png");
+	JudgeColor(image, R, "rec_R", Rcolor, Ps_num[4]);
+	image = imread("pic_cam//cam_case2_R.png");		//做第二次识别
+	JudgeColor(image, R, "rec_R", Rcolor, Ps_num[4]);
 
+	/*
 	while (1) {
 		for (i = 1; i <= 9; i++)
 			if (Rcolor[i] == "")
@@ -580,13 +655,16 @@ void recognition() {
 			Ps[5].y1 -= 10;
 			Ps[5].y2 -= 10;
 		}
-		JudgeColor(image, R, "R_decode", Rcolor, Ps);
+		JudgeColor(image, R, "rec_R", Rcolor, Ps_num[4]);
 	}
+	*/
 
 
-	Ps_reset(Ps);
-	image = imread("U.png");
-	JudgeColor(image, U, "U_decode", Ucolor, Ps);
+	Ps_reset(Ps, Ps_num);				//设置采样点的位置
+	image = imread("pic_cam//cam_case1_U.png");
+	JudgeColor(image, U, "rec_U", Ucolor, Ps_num[5]);
+	image = imread("pic_cam//cam_case2_U.png");			//做第二次识别
+	JudgeColor(image, U, "rec_U", Ucolor, Ps_num[5]);
 
 	string Ustandard = Ucolor[5];
 	string Rstandard = Rcolor[5];
@@ -608,7 +686,121 @@ void recognition() {
 	tmp[4] = Print_str(Lcolor, standardcolor);
 	tmp[5] = Print_str(Bcolor, standardcolor);
 
-	for (i = 0; i<6; i++)
-		out << tmp[i];
-	out.close();
+	for (i = 0; i < 6; i++)
+		color_def += tmp[i];
+	return color_def;			//颜色的定义字符串
+}
+
+void Empty_color(string Bcolor[], string Dcolor[], string Fcolor[], string Lcolor[], string Rcolor[], string Ucolor[])
+{
+	int i;
+	for (i = 0; i <= 9; i++) {
+		Bcolor[i] = "";
+		Dcolor[i] = "";
+		Fcolor[i] = "";
+		Lcolor[i] = "";
+		Rcolor[i] = "";
+		Ucolor[i] = "";
+	}
+}
+
+void Capture(string Case)
+{
+	VideoCapture  captureB(0);
+	VideoCapture  captureD(1);
+	//VideoCapture  captureF(2);
+	//VideoCapture  captureL(3);
+	//VideoCapture  captureR(4);
+	//VideoCapture  captureU(5);
+	if (!captureB.isOpened())
+	{
+		cout << "摄像头B打开失败！" << endl;
+		return;
+	}
+	if (!captureD.isOpened())
+	{
+		cout << "摄像头D打开失败！" << endl;
+		return;
+	}
+	/*
+	if (!captureF.isOpened())
+	{
+		cout << "摄像头F打开失败！" << endl;
+		return;
+	}
+	if (!captureL.isOpened())
+	{
+		cout << "摄像头L打开失败！" << endl;
+		return;
+	}
+	if (!captureR.isOpened())
+	{
+		cout << "摄像头R打开失败！" << endl;
+		return;
+	}
+	if (!captureU.isOpened())
+	{
+		cout << "摄像头U打开失败！" << endl;
+		return;
+	}
+	*/
+
+	char key;
+	char filename[200];
+	int count = 0;
+	namedWindow("【视频】", 1);
+	Mat frameB, frameD, frameF, frameL, frameR, frameU;		//order: BDFLRU
+
+	while (1)
+	{
+		key = waitKey(50);
+		captureD >> frameD;
+		captureB >> frameB;
+		imshow("【视频B】", frameB);
+		imshow("【视频D】", frameD);
+		/*
+		imshow("【视频F】", frameF);
+		imshow("【视频L】", frameL);
+		imshow("【视频R】", frameR);
+		imshow("【视频U】", frameU);
+		*/
+
+		if (key == 27)
+			break;				//按ESC键退出程序  
+		if (key == 32)//按空格键进行拍照  
+		{
+			if (Case == "Case1") {
+				sprintf(filename, "B.png");
+				imwrite(filename, frameB);//图片保存到本工程目录中  
+				sprintf(filename, "cam_case1_D.png");
+				/*
+				imwrite(filename, frameD);//图片保存到本工程目录中
+				sprintf(filename, "cam_case1_F.png");
+				imwrite(filename, frameF);//图片保存到本工程目录中  
+				sprintf(filename, "L.png");
+				imwrite(filename, frameL);//图片保存到本工程目录中  
+				sprintf(filename, "cam_case1_R.png");
+				imwrite(filename, frameR);//图片保存到本工程目录中  
+				sprintf(filename, "cam_case1_U.png");
+				imwrite(filename, frameU);//图片保存到本工程目录中
+				*/
+				break;					//拍完照以后跳出循环并返回
+			}
+			else if (Case == "Case2") {			//case2只需要拍摄4个面
+				sprintf(filename, "cam_case2_D.png");
+				/*
+				imwrite(filename, frameD);//图片保存到本工程目录中
+				sprintf(filename, "cam_case2_F.png");
+				imwrite(filename, frameF);//图片保存到本工程目录中
+				sprintf(filename, "cam_case2_R.png");
+				imwrite(filename, frameR);//图片保存到本工程目录中
+				sprintf(filename, "cam_case2_U.png");
+				imwrite(filename, frameU);//图片保存到本工程目录中
+				*/
+				break;					//拍完照以后跳出循环并返回
+			}
+		}
+	}
+
+	return;
 }

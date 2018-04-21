@@ -14,13 +14,11 @@ extern "C" {
 }
 
 int main() {
-	recognition();
-	string fileName = "defination_str.txt";
+	Capture("Case1");
+	//一只手张开一只手松开
+	//Capture("Case2");
 	string cubicState;
-	ifstream targetFileStream;
-	targetFileStream.open(fileName);
-	targetFileStream >> cubicState;
-
+	cubicState = Recognition();
 	char* cp = new char[cubicState.length() + 1];
 	strcpy(cp, cubicState.c_str());
 	char* res = solve(cp, NULL);
