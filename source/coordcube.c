@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <sys/types.h>
 #include <stdio.h>
 #include "prunetable_helpers.h"

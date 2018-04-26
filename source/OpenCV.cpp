@@ -1,14 +1,17 @@
-#include "stdafx.h"
 #include "opencv.h"
 P P1, P2, P3, P4, P5, P6, P7, P8, P9;
 vector<P> Ps;
 vector<P> Ps_num[6];			//Áù¸öÃæ¶ÔÓ¦ÁùÖÖ²»Í¬µÄ²ÊÉ«¿ì·½·¨
 string Bcolor[10];				//´æ·ÅÊ¶±ğ½á¹û,global
-string Dcolor[10];
-string Fcolor[10];
 string Lcolor[10];
-string Rcolor[10];
-string Ucolor[10];
+string Dcolor_case1[10];
+string Dcolor_case2[10];
+string Fcolor_case1[10];
+string Fcolor_case2[10];
+string Rcolor_case1[10];
+string Rcolor_case2[10];
+string Ucolor_case1[10];
+string Ucolor_case2[10];
 
 void ColorTest(Mat imgHSV, String c)
 {
@@ -427,7 +430,7 @@ void JudgeColor(Mat image, Mat& Blank, String c,string color[],vector <struct P>
 		if (color[i] == "")
 			break;				//´æÔÚÎ´Ê¶±ğ³öÀ´µÄÉ«¿éÊ±£¬Ìø³öÑ­»·
 	if (i > 9)							//Ö»ÓĞÔÚÈ«²¿É«¿éÊ¶±ğ³öÀ´²Å±£´æÊ¶±ğ½á¹ûÍ¼Æ¬
-		imwrite("pic_rec\\" + c + ".png", Blank);
+		imwrite( c , Blank);
 	else
 		cout << "Failed to recognize" + c + "the first time" << endl;	//ÌáÊ¾Ò»ÏÂ£¬ËµÃ÷µÚÒ»´ÎÃ»ÓĞÊ¶±ğ³É¹¦£¬Õâ¸öÔÚµ÷ÊÔµÄÊ±ºòÓÃµÃµ½
 }
@@ -553,12 +556,13 @@ string Recognition() {			//Ê¶±ğÄ§·½Ò»¸öÃæµÄÉ«¿é£¬¼Ó²ÎcaseºÍÃæ²ÎÊı£¬¸ù¾İ²»Í¬²ÎÊıÀ
 	Mat image;
 	vector <string> standardcolor;
 	string tmp[6];				//½ÓÊÜ·µ»ØµÄ×Ö·û´®
-	string color_def;
+	string color_def_case1;
+	string color_def_case2;
 
 
 	Ps_reset(Ps, Ps_num);		// ³õÊ¼»¯²ÎÊı
-	image = imread("pic_cam//B.png");			//BÃæ¿ÉÒÔÒ»´ÎÊ¶±ğ£¬Ê¶±ğÍê¾Í±£´æÍ¼Æ¬
-	JudgeColor(image, B, "rec_B", Bcolor, Ps_num[0]);
+	image = imread("./pic_cam/cam_B.png");			//BÃæ¿ÉÒÔÒ»´ÎÊ¶±ğ£¬Ê¶±ğÍê¾Í±£´æÍ¼Æ¬
+	JudgeColor(image, B, "./pic_rec/rec_B.png", Bcolor, Ps_num[0]);
 
 	/*
 	while (1) {					//Õâ¸öÑ­»·ÊÇÓÃÀ´×öÕÚµ²µÄ£¬ÓÃ×ÅÄ¿Ç°Ã»Ê²Ã´Ó°Ïì
@@ -575,15 +579,15 @@ string Recognition() {			//Ê¶±ğÄ§·½Ò»¸öÃæµÄÉ«¿é£¬¼Ó²ÎcaseºÍÃæ²ÎÊı£¬¸ù¾İ²»Í¬²ÎÊıÀ
 			Ps[7].x1 -= 10;
 			Ps[7].x2 -= 10;
 		}
-		JudgeColor(image, B, "rec_B", Bcolor, Ps_num[0]);
+		JudgeColor(image, B, "./pic_rec/rec_B", Bcolor, Ps_num[0]);
 	}
 	*/
 
 	Ps_reset(Ps, Ps_num);			//ÉèÖÃ²ÉÑùÎ»ÖÃ£¬Õâ¸öËæºóµ÷Õû
-	image = imread("pic_cam//cam_case1_D.png");
-	JudgeColor(image, D, "rec_D", Dcolor, Ps_num[1]);
-	image = imread("pic_cam//cam_case2_D.png");			//×öµÚ¶ş´ÎÊ¶±ğ
-	JudgeColor(image, D, "rec_D", Dcolor, Ps_num[1]);
+	image = imread("./pic_cam/cam_case1_D.png");
+	JudgeColor(image, D, "./pic_rec/rec_case1_D.png", Dcolor_case1, Ps_num[1]);
+	image = imread("./pic_cam/cam_case2_D.png");			//×öµÚ¶ş´ÎÊ¶±ğ
+	JudgeColor(image, D, "./pic_rec/rec_case2_D.png", Dcolor_case2, Ps_num[1]);
 
 	/*
 	while (1) {
@@ -605,10 +609,10 @@ string Recognition() {			//Ê¶±ğÄ§·½Ò»¸öÃæµÄÉ«¿é£¬¼Ó²ÎcaseºÍÃæ²ÎÊı£¬¸ù¾İ²»Í¬²ÎÊıÀ
 	*/
 
 	Ps_reset(Ps, Ps_num);				//ÉèÖÃ²ÉÑùÎ»ÖÃ£¬Õâ¸öËæºóµ÷Õû
-	image = imread("pic_cam//cam_case1_F.png");
-	JudgeColor(image, F, "rec_F", Fcolor, Ps_num[2]);
-	image = imread("pic_cam//cam_case2_F.png");			//×öµÚ¶ş´ÎÊ¶±ğ
-	JudgeColor(image, F, "rec_F", Fcolor, Ps_num[2]);
+	image = imread("./pic_cam/cam_case1_F.png");
+	JudgeColor(image, F, "./pic_rec/rec_case1_F.png", Fcolor_case1, Ps_num[2]);
+	image = imread("./pic_cam/cam_case2_F.png");			//×öµÚ¶ş´ÎÊ¶±ğ
+	JudgeColor(image, F, "./pic_rec/rec_case2_F.png", Fcolor_case2, Ps_num[2]);
 
 	/*
 	while (1) {
@@ -630,15 +634,15 @@ string Recognition() {			//Ê¶±ğÄ§·½Ò»¸öÃæµÄÉ«¿é£¬¼Ó²ÎcaseºÍÃæ²ÎÊı£¬¸ù¾İ²»Í¬²ÎÊıÀ
 	*/
 
 	Ps_reset(Ps, Ps_num);
-	image = imread("pic_cam//L.png");			//LÖ»ÒªÊ¶Ò»´Î
-	JudgeColor(image, L, "rec_L", Lcolor, Ps_num[3]);
+	image = imread("./pic_cam/cam_L.png");			//LÖ»ÒªÊ¶±ğÒ»´Î
+	JudgeColor(image, L, "./pic_rec/rec_L.png", Lcolor, Ps_num[3]);
 
 
 	Ps_reset(Ps, Ps_num);				//ÉèÖÃ²ÉÑùµãµÄÎ»ÖÃ
-	image = imread("pic_cam//cam_case1_R.png");
-	JudgeColor(image, R, "rec_R", Rcolor, Ps_num[4]);
-	image = imread("pic_cam//cam_case2_R.png");		//×öµÚ¶ş´ÎÊ¶±ğ
-	JudgeColor(image, R, "rec_R", Rcolor, Ps_num[4]);
+	image = imread("./pic_cam/cam_case1_R.png");
+	JudgeColor(image, R, "./pic_rec/rec_case1_R.png", Rcolor_case1, Ps_num[4]);
+	image = imread("./pic_cam/cam_case2_R.png");		//×öµÚ¶ş´ÎÊ¶±ğ
+	JudgeColor(image, R, "./pic_rec/rec_case2_R.png", Rcolor_case2, Ps_num[4]);
 
 	/*
 	while (1) {
@@ -661,15 +665,15 @@ string Recognition() {			//Ê¶±ğÄ§·½Ò»¸öÃæµÄÉ«¿é£¬¼Ó²ÎcaseºÍÃæ²ÎÊı£¬¸ù¾İ²»Í¬²ÎÊıÀ
 
 
 	Ps_reset(Ps, Ps_num);				//ÉèÖÃ²ÉÑùµãµÄÎ»ÖÃ
-	image = imread("pic_cam//cam_case1_U.png");
-	JudgeColor(image, U, "rec_U", Ucolor, Ps_num[5]);
-	image = imread("pic_cam//cam_case2_U.png");			//×öµÚ¶ş´ÎÊ¶±ğ
-	JudgeColor(image, U, "rec_U", Ucolor, Ps_num[5]);
+	image = imread("./pic_cam/cam_case1_U.png");
+	JudgeColor(image, U, "./pic_rec/rec_case1_U.png", Ucolor_case1, Ps_num[5]);
+	image = imread("./pic_cam/cam_case2_U.png");			//×öµÚ¶ş´ÎÊ¶±ğ
+	JudgeColor(image, U, "./pic_rec/rec_case2_U.png", Ucolor_case2, Ps_num[5]);
 
-	string Ustandard = Ucolor[5];
-	string Rstandard = Rcolor[5];
-	string Fstandard = Fcolor[5];
-	string Dstandard = Dcolor[5];
+	string Ustandard = Ucolor_case1[5];
+	string Rstandard = Rcolor_case1[5];
+	string Fstandard = Fcolor_case1[5];
+	string Dstandard = Dcolor_case1[5];
 	string Lstandard = Lcolor[5];
 	string Bstandard = Bcolor[5];
 	standardcolor.push_back(Ustandard);
@@ -679,16 +683,35 @@ string Recognition() {			//Ê¶±ğÄ§·½Ò»¸öÃæµÄÉ«¿é£¬¼Ó²ÎcaseºÍÃæ²ÎÊı£¬¸ù¾İ²»Í¬²ÎÊıÀ
 	standardcolor.push_back(Lstandard);
 	standardcolor.push_back(Bstandard);
 
-	tmp[0] = Print_str(Ucolor, standardcolor);
-	tmp[1] = Print_str(Rcolor, standardcolor);
-	tmp[2] = Print_str(Fcolor, standardcolor);
-	tmp[3] = Print_str(Dcolor, standardcolor);
+	//µÃµ½Õë¶ÔµÚÒ»×éÊ¶±ğµÄ×Ö·û´®ĞòÁĞ
+	tmp[0] = Print_str(Ucolor_case1, standardcolor);
+	tmp[1] = Print_str(Rcolor_case1, standardcolor);
+	tmp[2] = Print_str(Fcolor_case1, standardcolor);
+	tmp[3] = Print_str(Dcolor_case1, standardcolor);
 	tmp[4] = Print_str(Lcolor, standardcolor);
 	tmp[5] = Print_str(Bcolor, standardcolor);
 
 	for (i = 0; i < 6; i++)
-		color_def += tmp[i];
-	return color_def;			//ÑÕÉ«µÄ¶¨Òå×Ö·û´®
+		color_def_case1 += tmp[i];
+
+	//µÃµ½Õë¶ÔµÚ¶ş×éÊ¶±ğµÄ×Ö·û´®ĞòÁĞ
+	tmp[0] = Print_str(Ucolor_case2, standardcolor);
+	tmp[1] = Print_str(Rcolor_case2, standardcolor);
+	tmp[2] = Print_str(Fcolor_case2, standardcolor);
+	tmp[3] = Print_str(Dcolor_case2, standardcolor);
+	tmp[4] = Print_str(Lcolor, standardcolor);
+	tmp[5] = Print_str(Bcolor, standardcolor);
+
+	for (i = 0; i < 6; i++)
+		color_def_case2 += tmp[i];
+
+	//¸ù¾İÊ¶±ğ²Ù×÷½«Á½¸ö×Ö·û´®ºÏ²¢µÃµ½×îÖÕ×¼È·Ê¶±ğµÄ×Ö·û´®
+	color_def_case1[7] = color_def_case2[7];
+	color_def_case1[19] = color_def_case2[19];
+	color_def_case1[25] = color_def_case2[25];
+	color_def_case1[28] = color_def_case2[28];
+
+	return color_def_case1;			//ÑÕÉ«µÄ¶¨Òå×Ö·û´®
 }
 
 void Empty_color(string Bcolor[], string Dcolor[], string Fcolor[], string Lcolor[], string Rcolor[], string Ucolor[])
@@ -702,105 +725,4 @@ void Empty_color(string Bcolor[], string Dcolor[], string Fcolor[], string Lcolo
 		Rcolor[i] = "";
 		Ucolor[i] = "";
 	}
-}
-
-void Capture(string Case)
-{
-	VideoCapture  captureB(0);
-	VideoCapture  captureD(1);
-	//VideoCapture  captureF(2);
-	//VideoCapture  captureL(3);
-	//VideoCapture  captureR(4);
-	//VideoCapture  captureU(5);
-	if (!captureB.isOpened())
-	{
-		cout << "ÉãÏñÍ·B´ò¿ªÊ§°Ü£¡" << endl;
-		return;
-	}
-	if (!captureD.isOpened())
-	{
-		cout << "ÉãÏñÍ·D´ò¿ªÊ§°Ü£¡" << endl;
-		return;
-	}
-	/*
-	if (!captureF.isOpened())
-	{
-		cout << "ÉãÏñÍ·F´ò¿ªÊ§°Ü£¡" << endl;
-		return;
-	}
-	if (!captureL.isOpened())
-	{
-		cout << "ÉãÏñÍ·L´ò¿ªÊ§°Ü£¡" << endl;
-		return;
-	}
-	if (!captureR.isOpened())
-	{
-		cout << "ÉãÏñÍ·R´ò¿ªÊ§°Ü£¡" << endl;
-		return;
-	}
-	if (!captureU.isOpened())
-	{
-		cout << "ÉãÏñÍ·U´ò¿ªÊ§°Ü£¡" << endl;
-		return;
-	}
-	*/
-
-	char key;
-	char filename[200];
-	int count = 0;
-	namedWindow("¡¾ÊÓÆµ¡¿", 1);
-	Mat frameB, frameD, frameF, frameL, frameR, frameU;		//order: BDFLRU
-
-	while (1)
-	{
-		key = waitKey(50);
-		captureD >> frameD;
-		captureB >> frameB;
-		imshow("¡¾ÊÓÆµB¡¿", frameB);
-		imshow("¡¾ÊÓÆµD¡¿", frameD);
-		/*
-		imshow("¡¾ÊÓÆµF¡¿", frameF);
-		imshow("¡¾ÊÓÆµL¡¿", frameL);
-		imshow("¡¾ÊÓÆµR¡¿", frameR);
-		imshow("¡¾ÊÓÆµU¡¿", frameU);
-		*/
-
-		if (key == 27)
-			break;				//°´ESC¼üÍË³ö³ÌĞò  
-		if (key == 32)//°´¿Õ¸ñ¼ü½øĞĞÅÄÕÕ  
-		{
-			if (Case == "Case1") {
-				sprintf(filename, "B.png");
-				imwrite(filename, frameB);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ  
-				sprintf(filename, "cam_case1_D.png");
-				/*
-				imwrite(filename, frameD);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ
-				sprintf(filename, "cam_case1_F.png");
-				imwrite(filename, frameF);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ  
-				sprintf(filename, "L.png");
-				imwrite(filename, frameL);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ  
-				sprintf(filename, "cam_case1_R.png");
-				imwrite(filename, frameR);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ  
-				sprintf(filename, "cam_case1_U.png");
-				imwrite(filename, frameU);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ
-				*/
-				break;					//ÅÄÍêÕÕÒÔºóÌø³öÑ­»·²¢·µ»Ø
-			}
-			else if (Case == "Case2") {			//case2Ö»ĞèÒªÅÄÉã4¸öÃæ
-				sprintf(filename, "cam_case2_D.png");
-				/*
-				imwrite(filename, frameD);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ
-				sprintf(filename, "cam_case2_F.png");
-				imwrite(filename, frameF);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ
-				sprintf(filename, "cam_case2_R.png");
-				imwrite(filename, frameR);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ
-				sprintf(filename, "cam_case2_U.png");
-				imwrite(filename, frameU);//Í¼Æ¬±£´æµ½±¾¹¤³ÌÄ¿Â¼ÖĞ
-				*/
-				break;					//ÅÄÍêÕÕÒÔºóÌø³öÑ­»·²¢·µ»Ø
-			}
-		}
-	}
-
-	return;
 }

@@ -47,14 +47,18 @@ ostream& operator<<(ostream&, const Operation&);
 class CubicExplorer {
 private:
 	HandState handState;	//自定义类HandState类型，表示当前机械手状态
-	string serialInterfaceStr;	//保存转换后的串口序列字符串
+	vector<string> vecStrSerial;	//保存转换后的串口序列字符串
 	vector<string> strNorVec;	//string容器，保存分割后得到的一个个表示单个公式操作的字符串
 	vector<Operation> macVec;	//自定义枚举类型Operation容器，保存转换后得到的机械手操作序列
-public:
 	string target;		//字符串，存储将要处理的普通公式序列
-	CubicExplorer(char* cstr=nullptr, HandState& hs=HandState(true,true,true,true));
+public:
+	
+	CubicExplorer(char* cstr="", HandState& hs=HandState(true,true,true,true));
 	
 	friend ostream& operator<<(ostream&, const Operation&);		//友元操作符重载函数支持Operation类型和cout的直接使用，主要用于调试
+
+	void SetTarget(string);
+	vector<string>& GetVecStrSerial();
 
 	void OnR(vector<string>::iterator&);
 	void On_R(vector<string>::iterator&);

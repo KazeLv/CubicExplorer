@@ -2,31 +2,15 @@
 
 CubicExplorer::CubicExplorer(char* cstr,HandState& hs):target(cstr),handState(hs){}
 
+void CubicExplorer::SetTarget(string str) { target = str; }
+
+vector<string>& CubicExplorer::GetVecStrSerial() { return vecStrSerial; }
+
 void CubicExplorer::OnR(vector<string>::iterator& iter) {
 	RightTight();
 	GetLeftReadyAndTight();
 	macVec.push_back(Operation::R);
 	handState.right.isReady = !handState.right.isReady;
-	//if (*(iter + 1) == "U") {
-	//	iter++;
-	//	On_RR(iter);
-	//	OnF(iter);
-	//}
-	//else if (*(iter + 1) == "U'") {
-	//	iter++;
-	//	On_RR(iter);
-	//	On_F(iter);
-	//}
-	//else if (*(iter + 1) == "B") {
-	//	iter++;
-	//	OnRR(iter);
-	//	OnF(iter);
-	//}
-	//else if (*(iter + 1) == "B'") {
-	//	iter++;
-	//	OnRR(iter);
-	//	On_F(iter);
-	//}
 }
 
 void CubicExplorer::On_R(vector<string>::iterator& iter) {
@@ -34,26 +18,6 @@ void CubicExplorer::On_R(vector<string>::iterator& iter) {
 	GetLeftReadyAndTight();
 	macVec.push_back(Operation::_R);
 	handState.right.isReady = !handState.right.isReady;
-	/*if (*(iter + 1) == "U") {
-		iter++;
-		On_RR(iter);
-		OnF(iter);
-	}
-	else if (*(iter + 1) == "U'") {
-		iter++;
-		On_RR(iter);
-		On_F(iter);
-	}
-	else if (*(iter + 1) == "B") {
-		iter++;
-		OnRR(iter);
-		OnF(iter);
-	}
-	else if (*(iter + 1) == "B'") {
-		iter++;
-		OnRR(iter);
-		On_F(iter);
-	}*/
 }
 
 void CubicExplorer::OnF(vector<string>::iterator& iter) {
@@ -61,26 +25,6 @@ void CubicExplorer::OnF(vector<string>::iterator& iter) {
 	GetRightReadyAndTight();
 	macVec.push_back(Operation::F);
 	handState.left.isReady = !handState.left.isReady;
-	/*if (*(iter + 1) == "U") {
-		iter++;
-		OnFF(iter);
-		OnR(iter);
-	}
-	else if (*(iter + 1) == "U'") {
-		iter++;
-		OnFF(iter);
-		On_R(iter);
-	}
-	else if (*(iter + 1) == "B") {
-		iter++;
-		On_FF(iter);
-		OnR(iter);
-	}
-	else if (*(iter + 1) == "B'") {
-		iter++;
-		On_FF(iter);
-		On_R(iter);
-	}*/
 }
 
 void CubicExplorer::On_F(vector<string>::iterator& iter) {
@@ -88,27 +32,6 @@ void CubicExplorer::On_F(vector<string>::iterator& iter) {
 	GetRightReadyAndTight();
 	macVec.push_back(Operation::_F);
 	handState.left.isReady = !handState.left.isReady;
-	/*if (*(iter + 1) == "U") {
-		iter++;
-		OnFF(iter);
-		OnR(iter);
-	}
-	else if (*(iter + 1) == "U'") {
-		iter++;
-		OnFF(iter);
-		On_R(iter);
-	}
-	else if (*(iter + 1) == "B") {
-		iter++;
-		On_FF(iter);
-		OnR(iter);
-	}
-	else if (*(iter + 1) == "B'") {
-		iter++;
-		On_FF(iter);
-		On_R(iter);
-	}
-*/
 }
 
 void CubicExplorer::OnRR(vector<string>::iterator& iter) {
@@ -359,16 +282,8 @@ void CubicExplorer::GetShortestWay() {
 			strNorVec.push_back(strTemp);
 			lastSpace = i + 1;
 		}
-	}/*
-	strNorVec.push_back(string(target, lastSpace, i - 1));*/
+	}
 
-	//显示分离结果，主要用于调试
-	//for (auto it = strNorVec.cbegin(); it != strNorVec.cend(); it++) {
-	//	cout << *it << " ";
-	//}
-	//cout << endl;
-
-	//将分割得到的字符串操作序列转换为普通操作枚举类型存入norVec容器
 	for (auto iter = strNorVec.begin(); iter != strNorVec.end(); iter++) {
 		if (*iter == "R") OnR(iter);
 		else if (*iter == "F") OnF(iter);
@@ -427,40 +342,38 @@ void CubicExplorer::GetShortestWay() {
 	}
 
 	for (auto iter = macVec.begin(); iter != macVec.end(); iter++) {
-		serialInterfaceStr += "#";
 		switch (*iter) {
 		case Operation::F:
-			serialInterfaceStr += "1P7T200";
+			vecStrSerial.push_back("#1P7T200\r\n");
 			break;
 		case Operation::_F:
-			serialInterfaceStr += "1P6T200";
+			vecStrSerial.push_back("#1P6T200\r\n");
 			break;
 		case Operation::F2:
-			serialInterfaceStr += "1P8T200";
+			vecStrSerial.push_back("#1P8T200\r\n");
 			break;
 		case Operation::LeftLoose:
-			serialInterfaceStr += "2P0T200";
+			vecStrSerial.push_back("#2P0T200\r\n");
 			break;
 		case Operation::LeftTight:
-			serialInterfaceStr += "2P1T200";
+			vecStrSerial.push_back("#2P1T200\r\n");
 			break;
 		case Operation::R:
-			serialInterfaceStr += "3P7T200";
+			vecStrSerial.push_back("#3P7T200\r\n");
 			break;
 		case Operation::_R:
-			serialInterfaceStr += "3P6T200";
+			vecStrSerial.push_back("#3P6T200\r\n");
 			break;
 		case Operation::R2:
-			serialInterfaceStr += "3P8T200";
+			vecStrSerial.push_back("#3P8T200\r\n");
 			break;
 		case Operation::RightLoose:
-			serialInterfaceStr += "4P0T200";
+			vecStrSerial.push_back("#4P0T200\r\n");
 			break;
 		case Operation::RightTight:
-			serialInterfaceStr += "4P1T200";
+			vecStrSerial.push_back("#4P1T200\r\n");
 			break;
 		}
-		serialInterfaceStr += "\r\n";
 	}
 }
 
@@ -476,8 +389,6 @@ void CubicExplorer::ShowOperations() {
 	cout << "Final operations' count: " << cnt << endl;
 	cout << "All operations' count: " << macVec.size() << endl;
 	cout << endl;
-	cout << "SerialInterfaceStr: " << endl;
-	cout << serialInterfaceStr << endl;
 }
 
 
